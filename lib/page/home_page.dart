@@ -27,8 +27,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.pink.shade100,
               child: Column(
                 children: [
-                  Text("UserId: ${user.user?.id}"),
-                  Text("UserName: ${user.user?.name}"),
+                  Text("Hello: ${user.user?.name}"),
                 ],
               ),
             ),
