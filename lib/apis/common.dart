@@ -6,6 +6,7 @@ const port = 5000;
 
 // user api
 const getUserInfoApi = "/user";
+const getAllUserApi = "/user/get-all";
 //
 
 // message api

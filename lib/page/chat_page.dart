@@ -61,9 +61,7 @@ class _ChatPageState extends State<ChatPage> {
                   children: [buildChatArea()],
                 ),
               ),
-              const Text("Login Successfully"),
-              Text("UserId: ${user.user?.id}"),
-              Text("UserName: ${user.user?.name}"),
+              Text("${user.user?.name}"),
             ],
           )),
     );

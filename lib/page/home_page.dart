@@ -10,7 +10,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<User> friends = [];
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserViewModel>(context);
@@ -35,22 +34,46 @@ class _HomePageState extends State<HomePage> {
               child: Text("Danh sách user",
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: friends.length,
-                  itemBuilder: (context, i) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => ChatPage()));
-                      },
-                      child: Container(
-                        child: Column(
-                          children: [Text(friends[i].name)],
-                        ),
-                      ),
-                    );
-                  }),
+            Container(
+              height: 200,
+              child: FutureBuilder(
+                future:
+                    Provider.of<UserViewModel>(context, listen: false).getAll(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Text("Have error");
+                    }
+                    return ListView.builder(
+                        padding: EdgeInsets.only(left: 50, right: 50, top: 10),
+                        itemCount: user.listUser.length,
+                        itemBuilder: (context, i) {
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => ChatPage()));
+                              },
+                              child: Container(
+                                color: Colors.blueGrey,
+                                child: Column(children: [
+                                  Text(
+                                    user.listUser[i].name,
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                ]),
+                              ),
+                            ),
+                          );
+                        });
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+              ),
             ),
             Container(
               child: Text("Danh sách nhóm",
@@ -58,11 +81,11 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: ListView.builder(
-                  itemCount: friends.length,
+                  itemCount: 0,
                   itemBuilder: (context, i) {
                     return Container(
                       child: Column(
-                        children: [Text(friends[i].name)],
+                        children: [Text(user.listUser[i].name)],
                       ),
                     );
                   }),

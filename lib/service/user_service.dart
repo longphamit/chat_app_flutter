@@ -10,4 +10,12 @@ class UserService {
       throw Exception(e.toString());
     }
   }
+
+  Future<List<User>> getAllUser() async {
+    try {
+      return await _userRepository.getAllUser();
+    } on Exception catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
