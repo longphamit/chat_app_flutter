@@ -14,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserViewModel>(context);
-    friends = Provider.of<UserViewModel>(context).friends;
+    //friends = Provider.of<UserViewModel>(context).friends;
     return Scaffold(
       body: Container(
         alignment: Alignment.center,

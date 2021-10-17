@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserViewModel>(context);
-    friends = Provider.of<UserViewModel>(context).friends;
+    //friends = Provider.of<UserViewModel>(context).friends;
     return Scaffold(
       body: Container(
           alignment: Alignment.center,
@@ -61,6 +61,9 @@ class _ChatPageState extends State<ChatPage> {
                   children: [buildChatArea()],
                 ),
               ),
+              const Text("Login Successfully"),
+              Text("UserId: ${user.user?.id}"),
+              Text("UserName: ${user.user?.name}"),
             ],
           )),
     );

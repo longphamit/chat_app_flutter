@@ -15,10 +15,13 @@ class UserRepository {
       var uri = Uri.http("$host:$port", getUserInfoApi, queryParams);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
-      var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-      return User.jsonFrom(decodedResponse);
+      if (response.statusCode == 200) {
+        var decodedResponse = jsonDecode(response.body);
+        return User.jsonFrom(decodedResponse[0]);
+      }
+      throw Exception();
     } on Exception catch (e) {
-      throw Exception(e);
+      throw Exception(e.toString());
     }
   }
 }
