@@ -1,4 +1,5 @@
 import 'package:chat_app_flutter/page/chat_page.dart';
+import 'package:chat_app_flutter/page/home_page.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     Provider.of<UserViewModel>(context, listen: false)
         .login(username, password)
         .then((value) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => ChatPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
     });
   }
 

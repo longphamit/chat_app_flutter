@@ -4,6 +4,10 @@ import 'package:flutter/foundation.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserService _userService = new UserService();
+  List<User> friends = [
+    User(id: "1", name: "Long"),
+    User(id: "2", name: "Vinh")
+  ];
   User? user;
   Future<void> login(String username, String password) async {
     try {
