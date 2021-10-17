@@ -1,4 +1,5 @@
 import 'package:chat_app_flutter/model/user_model.dart';
+import 'package:chat_app_flutter/page/chat_group_page.dart';
 import 'package:chat_app_flutter/page/chat_page.dart';
 import 'package:chat_app_flutter/view_model/group_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
@@ -80,22 +81,33 @@ class _HomePageState extends State<HomePage> {
               child: ListView.builder(
                   itemCount: groups.length,
                   itemBuilder: (context, i) {
-                    return Container(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 200,
-                            width: 200,
-                            margin: EdgeInsets.all(20),
-                            color: Colors.pink.shade100,
-                            child: Center(
-                              child: Text(
-                                groups[i].name,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => ChatGroupPage(
+                                      groupId: groups[i].id,
+                                      groupName: groups[i].name,
+                                    )));
+                      },
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 200,
+                              width: 200,
+                              margin: EdgeInsets.all(20),
+                              color: Colors.pink.shade100,
+                              child: Center(
+                                child: Text(
+                                  groups[i].name,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
-                          )
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   }),

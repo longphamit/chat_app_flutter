@@ -13,4 +13,12 @@ class MessageService {
       throw Exception(e.toString());
     }
   }
+
+  Future<List<Message>> getGroupMessage(String groupId) async {
+    try {
+      return await _messageRepository.getGroupMessage(groupId);
+    } on Exception catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

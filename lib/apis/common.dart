@@ -11,7 +11,7 @@ const getAllUserApi = "/user/get-all";
 
 // message api
 const getMessageIndividual = "/message";
-const getMessageByReceiverId = "/message/receiver-id";
+const getMessageByReceiverId = "/message/receive-id";
 //
 
 // group api

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 class MessageViewModel extends ChangeNotifier {
   final MessageService _messageService = MessageService();
+  List<Message> messagOfGroup = [];
   List<Message> sender = [];
   List<Message> receiver = [];
   Future<void> getPeerMessage(String senderId, String receiverId) async {
@@ -14,6 +15,16 @@ class MessageViewModel extends ChangeNotifier {
           await _messageService.getPeerMessage(senderId, receiverId);
       sender = peerList[0];
       receiver = peerList[1];
+      notifyListeners();
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> getGroupMessage(String groupId) async {
+    try {
+      messagOfGroup = await _messageService.getGroupMessage(groupId);
+      messagOfGroup.sort((a, b) => a.time.compareTo(b.time));
       notifyListeners();
     } on Exception catch (e) {
       debugPrint(e.toString());

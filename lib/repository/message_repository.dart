@@ -42,4 +42,27 @@ class MessageRepository {
       throw Exception(e.toString());
     }
   }
+
+  Future<List<Message>> getGroupMessage(String groupId) async {
+    try {
+      Map<String, String> queryParams = {'receiverId': groupId};
+      var uri = Uri.http("$host:$port", getMessageByReceiverId, queryParams);
+      var response = await http.get(uri,
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'});
+      if (response.statusCode == 200) {
+        var decodedResponse = jsonDecode(response.body);
+        var message = decodedResponse["message"];
+        var receiver = decodedResponse["receiver"];
+        List<Message> messageList = [];
+        if (message != null) {
+          (message as List)
+              .forEach((element) => messageList.add(Message.jsonFrom(element)));
+        }
+        return messageList;
+      }
+      throw Exception();
+    } on Exception catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

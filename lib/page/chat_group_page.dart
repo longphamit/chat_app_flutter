@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatGroupPage extends StatefulWidget {
-  final int receiverIndex;
-  const ChatGroupPage({Key? key, required int this.receiverIndex})
+  final String groupId;
+  final String groupName;
+  const ChatGroupPage(
+      {Key? key, required String this.groupId, required String this.groupName})
       : super(key: key);
 
   @override
@@ -17,17 +19,12 @@ class ChatGroupPage extends StatefulWidget {
 
 class _ChatGroupState extends State<ChatGroupPage> {
   final TextEditingController textEditingController = TextEditingController();
-  late int receiverIndex;
   @override
   void initState() {
-    receiverIndex = widget.receiverIndex;
     // TODO: implement initState
     //
-  }
-
-  Widget buildChatList() {
-    return Container(
-        height: MediaQuery.of(context).size.height * 0.75, child: Container());
+    Provider.of<MessageViewModel>(context, listen: false)
+        .getGroupMessage(widget.groupId);
   }
 
   Widget buildChatArea() {
@@ -55,10 +52,43 @@ class _ChatGroupState extends State<ChatGroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final groups =
-        Provider.of<GroupViewModel>(context, listen: false).listGroup;
-    final message = Provider.of<MessageViewModel>(context, listen: false);
-    //friends = Provider.of<UserViewModel>(context).friends;
-    return Container();
+    final messages = Provider.of<MessageViewModel>(context).messagOfGroup;
+    return Scaffold(
+      body: Container(
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 50),
+              child: Center(
+                child: Text(
+                  widget.groupName,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+            ),
+            Container(
+              child: Expanded(
+                child: ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, i) {
+                      return Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [Text(messages[i].content)],
+                        ),
+                      );
+                    }),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [buildChatArea()],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
