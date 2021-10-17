@@ -108,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                   children: [buildChatArea()],
                 ),
               ),
-              Text("${user.user?.name}"),
+              Text("${user.user.name}"),
             ],
           )),
     );
@@ -132,10 +132,12 @@ class _ChatPageState extends State<ChatPage> {
               ),
               Container(
                   padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(color: Colors.blue),
+                  decoration: BoxDecoration(
+                      color: isSender ? Colors.blue : Colors.black12),
                   child: Text(
                     content,
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: isSender ? Colors.white : Colors.black),
                   )),
               Row(
                 children: [Text(time.toLocal().toString())],

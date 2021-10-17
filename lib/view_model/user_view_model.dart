@@ -20,7 +20,7 @@ class UserViewModel extends ChangeNotifier {
   Future<void> getAll() async {
     try {
       listUser = await _userService.getAllUser();
-      listUser.removeWhere((element) => element.id == user?.id);
+      listUser.removeWhere((element) => element.id == user.id);
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
