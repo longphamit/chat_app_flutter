@@ -1,5 +1,6 @@
 import 'package:chat_app_flutter/model/user_model.dart';
 import 'package:chat_app_flutter/page/chat_page.dart';
+import 'package:chat_app_flutter/view_model/group_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,9 +12,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<GroupViewModel>(context, listen: false).getAll();
+    Provider.of<UserViewModel>(context, listen: false).getAll();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserViewModel>(context);
-    //friends = Provider.of<UserViewModel>(context).friends;
+    final groups = Provider.of<GroupViewModel>(context).listGroup;
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
@@ -35,59 +44,58 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             Container(
-              height: 200,
-              child: FutureBuilder(
-                future:
-                    Provider.of<UserViewModel>(context, listen: false).getAll(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Text("Have error");
-                    }
-                    return ListView.builder(
-                        padding: EdgeInsets.only(left: 50, right: 50, top: 10),
-                        itemCount: user.listUser.length,
-                        itemBuilder: (context, i) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => ChatPage(
-                                              receiverIndex: i,
-                                            )));
-                              },
-                              child: Container(
-                                color: Colors.blueGrey,
-                                child: Column(children: [
-                                  Text(
-                                    user.listUser[i].name,
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ]),
-                              ),
-                            ),
-                          );
-                        });
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-            ),
+                height: 200,
+                child: ListView.builder(
+                    padding: EdgeInsets.only(left: 50, right: 50, top: 10),
+                    itemCount: user.listUser.length,
+                    itemBuilder: (context, i) {
+                      return Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => ChatPage(
+                                          receiverIndex: i,
+                                        )));
+                          },
+                          child: Container(
+                            color: Colors.blueGrey,
+                            child: Column(children: [
+                              Text(
+                                user.listUser[i].name,
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ]),
+                          ),
+                        ),
+                      );
+                    })),
             Container(
               child: Text("Danh sách nhóm",
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             Expanded(
               child: ListView.builder(
-                  itemCount: 0,
+                  itemCount: groups.length,
                   itemBuilder: (context, i) {
                     return Container(
                       child: Column(
-                        children: [Text(user.listUser[i].name)],
+                        children: [
+                          Container(
+                            height: 200,
+                            width: 200,
+                            margin: EdgeInsets.all(20),
+                            color: Colors.pink.shade100,
+                            child: Center(
+                              child: Text(
+                                groups[i].name,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     );
                   }),

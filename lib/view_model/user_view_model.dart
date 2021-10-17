@@ -21,6 +21,7 @@ class UserViewModel extends ChangeNotifier {
     try {
       listUser = await _userService.getAllUser();
       listUser.removeWhere((element) => element.id == user.id);
+      notifyListeners();
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
