@@ -55,7 +55,9 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => ChatPage()));
+                                        builder: (_) => ChatPage(
+                                              receiverIndex: i,
+                                            )));
                               },
                               child: Container(
                                 color: Colors.blueGrey,

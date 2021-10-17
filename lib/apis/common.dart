@@ -10,5 +10,5 @@ const getAllUserApi = "/user/get-all";
 //
 
 // message api
-const getMessageByUserIdApi = "";
+const getMessageIndividual = "/message";
 //

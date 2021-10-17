@@ -1,4 +1,5 @@
 import 'package:chat_app_flutter/page/login_page.dart';
+import 'package:chat_app_flutter/view_model/message_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserViewModel())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
+        ChangeNotifierProvider(create: (context) => MessageViewModel())
+      ],
       child: const MaterialApp(
         title: "Chat App",
         home: LoginPage(),

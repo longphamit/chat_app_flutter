@@ -4,20 +4,15 @@ import 'package:flutter/foundation.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserService _userService = UserService();
-  User? user;
+  User user = User();
   List<User> listUser = [];
   Future<int> login(String username, String password) async {
     try {
       user = await _userService.login(username, password);
-      _userService.getAllUser().then((value) {
-        listUser = value;
-        notifyListeners();
-      });
       notifyListeners();
-      if (user != null) return 1;
+      if (user != null && user.id != "") return 1;
       return 0;
     } on Exception catch (e) {
-      user = null;
       return 0;
     }
   }
