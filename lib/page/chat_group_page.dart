@@ -53,6 +53,7 @@ class _ChatGroupState extends State<ChatGroupPage> {
   @override
   Widget build(BuildContext context) {
     final messages = Provider.of<MessageViewModel>(context).messagOfGroup;
+    final user = Provider.of<UserViewModel>(context).user;
     return Scaffold(
       body: Container(
         child: Column(
@@ -73,7 +74,9 @@ class _ChatGroupState extends State<ChatGroupPage> {
                     itemBuilder: (context, i) {
                       return Container(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: messages[i].senderId == user.id
+                              ? MainAxisAlignment.end
+                              : MainAxisAlignment.start,
                           children: [Text(messages[i].content)],
                         ),
                       );
