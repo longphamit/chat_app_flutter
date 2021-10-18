@@ -57,12 +57,16 @@ class _ChatGroupState extends State<ChatGroupPage> {
           SizedBox(width: 10.0),
           FloatingActionButton(
             onPressed: () {
-              socket.emit('GROUP_MESSAGE', {
+              var message = {
                 "receiverId": widget.groupId,
                 "senderName": user.name,
                 "senderId": user.id,
                 "content": textEditingController.text
-              });
+              };
+              socket.emit('GROUP_MESSAGE', message);
+              Provider.of<MessageViewModel>(context, listen: false)
+                  .addMessageToMessageOfGroup(
+                      Message.jsonFromInternal(message));
               textEditingController.text = '';
             },
             elevation: 0,
