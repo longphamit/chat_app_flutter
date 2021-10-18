@@ -21,4 +21,14 @@ class MessageService {
       throw Exception(e.toString());
     }
   }
+
+  Future<Message> createPeerMessage(String senderId, String receiverId,
+      String senderName, String content) async {
+    try {
+      return await _messageRepository.createMessage(
+          senderId, receiverId, senderName, content);
+    } on Exception catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

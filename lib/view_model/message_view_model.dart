@@ -38,4 +38,16 @@ class MessageViewModel extends ChangeNotifier {
     peer.sort((a, b) => a.time.compareTo(b.time));
     return peer;
   }
+
+  Future<void> createPeerMessage(String senderId, String receiverId,
+      String senderName, String content) async {
+    try {
+      Message message = await _messageService.createPeerMessage(
+          senderId, receiverId, senderName, content);
+      sender.add(message);
+      notifyListeners();
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }

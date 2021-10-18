@@ -65,4 +65,28 @@ class MessageRepository {
       throw Exception(e.toString());
     }
   }
+
+  Future<Message> createMessage(String senderId, String receiverId,
+      String senderName, String content) async {
+    try {
+      var data = {
+        'senderId': senderId,
+        'senderName': senderName,
+        'receiverId': receiverId,
+        'content': content
+      };
+      var bodyJson = jsonEncode(data);
+      var uri = Uri.http("$host:$port", createPeerMessage);
+      var response = await http.post(uri,
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+          body: bodyJson);
+      if (response.statusCode == 201) {
+        var decodedResponse = jsonDecode(response.body);
+        return Message.jsonFrom(decodedResponse[0]);
+      }
+      throw Exception();
+    } on Exception catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

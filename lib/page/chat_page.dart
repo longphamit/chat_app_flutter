@@ -28,7 +28,7 @@ class _ChatPageState extends State<ChatPage> {
         height: MediaQuery.of(context).size.height * 0.75, child: Container());
   }
 
-  Widget buildChatArea() {
+  Widget buildChatArea(String senderId, String receiverId, String senderName) {
     return Container(
       child: Row(
         children: <Widget>[
@@ -41,7 +41,12 @@ class _ChatPageState extends State<ChatPage> {
           SizedBox(width: 10.0),
           FloatingActionButton(
             onPressed: () {
-              textEditingController.text = '';
+              var content = textEditingController.value.toString();
+              if (content.isNotEmpty) {
+                Provider.of<MessageViewModel>(context).createPeerMessage(
+                    senderId, receiverId, senderName, content);
+                textEditingController.text = '';
+              }
             },
             elevation: 0,
             child: Icon(Icons.send),
@@ -105,7 +110,10 @@ class _ChatPageState extends State<ChatPage> {
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [buildChatArea()],
+                  children: [
+                    buildChatArea(
+                        id, user.listUser[receiverIndex].id, user.user.name)
+                  ],
                 ),
               ),
               Text("${user.user.name}"),
