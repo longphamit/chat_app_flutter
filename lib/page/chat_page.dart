@@ -41,10 +41,11 @@ class _ChatPageState extends State<ChatPage> {
           SizedBox(width: 10.0),
           FloatingActionButton(
             onPressed: () {
-              var content = textEditingController.value.toString();
+              var content = textEditingController.text;
               if (content.isNotEmpty) {
-                Provider.of<MessageViewModel>(context).createPeerMessage(
-                    senderId, receiverId, senderName, content);
+                Provider.of<MessageViewModel>(context, listen: false)
+                    .createPeerMessage(
+                        senderId, receiverId, senderName, content);
                 textEditingController.text = '';
               }
             },
@@ -67,44 +68,46 @@ class _ChatPageState extends State<ChatPage> {
           alignment: Alignment.center,
           child: Column(
             children: [
-              Container(
-                padding: EdgeInsets.only(top: 50),
-                height: 600,
-                child: FutureBuilder(
-                  future: Provider.of<MessageViewModel>(context, listen: false)
-                      .getPeerMessage(id, user.listUser[receiverIndex].id),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasError) {
-                        return Text("Have error");
-                      }
-                      List<Message> list = message.sortByTime();
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.only(top: 50),
+                  child: FutureBuilder(
+                    future: Provider.of<MessageViewModel>(context,
+                            listen: false)
+                        .getPeerMessage(id, user.listUser[receiverIndex].id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          return Text("Have error");
+                        }
+                        List<Message> list = message.sortByTime();
 
-                      return ListView.builder(
-                          padding:
-                              EdgeInsets.only(left: 50, right: 50, top: 10),
-                          itemCount: list.length,
-                          itemBuilder: (context, i) {
-                            if (list[i].senderId != id) {
+                        return ListView.builder(
+                            padding:
+                                EdgeInsets.only(left: 50, right: 50, top: 10),
+                            itemCount: list.length,
+                            itemBuilder: (context, i) {
+                              if (list[i].senderId != id) {
+                                return record(
+                                    isSender: false,
+                                    name: user.listUser
+                                        .firstWhere((element) =>
+                                            element.id == list[i].senderId)
+                                        .name,
+                                    content: list[i].content,
+                                    time: list[i].time);
+                              }
                               return record(
-                                  isSender: false,
-                                  name: user.listUser
-                                      .firstWhere((element) =>
-                                          element.id == list[i].senderId)
-                                      .name,
+                                  isSender: true,
+                                  name: user.user.name,
                                   content: list[i].content,
                                   time: list[i].time);
-                            }
-                            return record(
-                                isSender: true,
-                                name: user.user.name,
-                                content: list[i].content,
-                                time: list[i].time);
-                          });
-                    } else {
-                      return CircularProgressIndicator();
-                    }
-                  },
+                            });
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },
+                  ),
                 ),
               ),
               Expanded(

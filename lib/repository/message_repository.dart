@@ -81,8 +81,8 @@ class MessageRepository {
           headers: {HttpHeaders.contentTypeHeader: 'application/json'},
           body: bodyJson);
       if (response.statusCode == 201) {
-        var decodedResponse = jsonDecode(response.body);
-        return Message.jsonFrom(decodedResponse[0]);
+        var decodedResponse = jsonDecode(response.body) as Map;
+        return Message.jsonFrom(decodedResponse);
       }
       throw Exception();
     } on Exception catch (e) {
