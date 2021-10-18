@@ -1,6 +1,8 @@
+import 'package:chat_app_flutter/apis/common.dart';
 import 'package:chat_app_flutter/model/message_model.dart';
 import 'package:chat_app_flutter/model/user_model.dart';
 import 'package:chat_app_flutter/view_model/message_view_model.dart';
+import 'package:chat_app_flutter/view_model/socket_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +21,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     receiverIndex = widget.receiverIndex;
+    Provider.of<SocketChat>(context, listen: false)
+        .connectToServer(host, port)
+        .then((value) => print(
+            Provider.of<SocketChat>(context, listen: false).socket!.connected));
+    super.initState();
     // TODO: implement initState
     //
   }
