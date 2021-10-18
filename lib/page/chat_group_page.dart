@@ -1,5 +1,6 @@
 import 'package:chat_app_flutter/model/message_model.dart';
 import 'package:chat_app_flutter/model/user_model.dart';
+import 'package:chat_app_flutter/service/socket_service.dart';
 import 'package:chat_app_flutter/view_model/group_view_model.dart';
 import 'package:chat_app_flutter/view_model/message_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
@@ -25,6 +26,12 @@ class _ChatGroupState extends State<ChatGroupPage> {
     //
     Provider.of<MessageViewModel>(context, listen: false)
         .getGroupMessage(widget.groupId);
+    connectSocket();
+  }
+
+  void connectSocket() async {
+    SocketService sockService = SocketService();
+    await sockService.connect();
   }
 
   Widget buildChatArea() {
@@ -73,11 +80,32 @@ class _ChatGroupState extends State<ChatGroupPage> {
                     itemCount: messages.length,
                     itemBuilder: (context, i) {
                       return Container(
+                        margin: EdgeInsets.all(10),
                         child: Row(
                           mainAxisAlignment: messages[i].senderId == user.id
                               ? MainAxisAlignment.end
                               : MainAxisAlignment.start,
-                          children: [Text(messages[i].content)],
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    messages[i].senderName,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Text(messages[i].content),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
                         ),
                       );
                     }),
