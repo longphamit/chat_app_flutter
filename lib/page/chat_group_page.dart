@@ -6,6 +6,7 @@ import 'package:chat_app_flutter/view_model/message_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ChatGroupPage extends StatefulWidget {
   final String groupId;
@@ -21,6 +22,7 @@ class ChatGroupPage extends StatefulWidget {
 class _ChatGroupState extends State<ChatGroupPage> {
   final TextEditingController textEditingController = TextEditingController();
   SocketService socketService = new SocketService();
+  late IO.Socket socket;
   @override
   void initState() {
     // TODO: implement initState
@@ -38,10 +40,11 @@ class _ChatGroupState extends State<ChatGroupPage> {
   }
 
   void connectSocket() {
-    socketService.connect("192.168.1.6", 5000);
+    socket = socketService.connectGroup(
+        "192.168.1.6", 5000, widget.groupId, context);
   }
 
-  Widget buildChatArea() {
+  Widget buildChatArea(User user) {
     return Container(
       child: Row(
         children: <Widget>[
@@ -54,6 +57,12 @@ class _ChatGroupState extends State<ChatGroupPage> {
           SizedBox(width: 10.0),
           FloatingActionButton(
             onPressed: () {
+              socket.emit('GROUP_MESSAGE', {
+                "receiverId": widget.groupId,
+                "senderName": user.name,
+                "senderId": user.id,
+                "content": textEditingController.text
+              });
               textEditingController.text = '';
             },
             elevation: 0,
@@ -121,7 +130,7 @@ class _ChatGroupState extends State<ChatGroupPage> {
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [buildChatArea()],
+                children: [buildChatArea(user)],
               ),
             ),
           ],

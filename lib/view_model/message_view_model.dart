@@ -50,4 +50,9 @@ class MessageViewModel extends ChangeNotifier {
       debugPrint(e.toString());
     }
   }
+
+  void addMessageToMessageOfGroup(Message message) {
+    messagOfGroup.add(message);
+    notifyListeners();
+  }
 }
