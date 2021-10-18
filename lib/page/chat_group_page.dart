@@ -20,6 +20,7 @@ class ChatGroupPage extends StatefulWidget {
 
 class _ChatGroupState extends State<ChatGroupPage> {
   final TextEditingController textEditingController = TextEditingController();
+  SocketService socketService = new SocketService();
   @override
   void initState() {
     // TODO: implement initState
@@ -29,9 +30,15 @@ class _ChatGroupState extends State<ChatGroupPage> {
     connectSocket();
   }
 
-  void connectSocket() async {
-    SocketService sockService = SocketService();
-    await sockService.connect();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    socketService.disconnect();
+  }
+
+  void connectSocket() {
+    socketService.connect("192.168.1.6", 5000);
   }
 
   Widget buildChatArea() {

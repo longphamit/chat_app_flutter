@@ -1,33 +1,28 @@
-import 'dart:async';
-import 'dart:io';
+// ignore_for_file: unnecessary_brace_in_string_interps
 
+import 'dart:async';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 
 class SocketService {
-  Socket? socket;
-  Socket getSocket() => socket!;
-  Future<Socket> connect(String host, int port) async {
-    Socket.connect(host, port).then((Socket sock) {
-      socket = sock;
-      socket!.listen(dataHandler,
-          onDone: doneHandler, onError: errorHandler, cancelOnError: false);
-    }).catchError((e) {
-      debugPrint("Unable to connect: $e");
+  late IO.Socket socket;
+  IO.Socket connect(String host, int port) {
+    socket = IO.io("http://${host}:${port}", <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
     });
-    stdin.listen(
-        (data) => socket!.write(String.fromCharCodes(data).trim() + '\n'));
-    return socket!;
+    socket.connect();
+    socket.onConnect((_) {
+      print('connect');
+      socket.emit('msg', 'test');
+    });
+    socket.on('event', (data) => print(data));
+    socket.onDisconnect((_) => print('disconnect'));
+    socket.on('fromServer', (_) => print(_));
+    return socket;
   }
 
-  void dataHandler(data) {
-    debugPrint(String.fromCharCodes(data).trim());
-  }
-
-  void errorHandler(error, StackTrace trace) {
-    debugPrint(error);
-  }
-
-  void doneHandler() {
-    socket!.destroy();
+  void disconnect() {
+    socket.disconnect();
   }
 }
