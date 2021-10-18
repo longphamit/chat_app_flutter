@@ -1,6 +1,7 @@
 import 'package:chat_app_flutter/page/login_page.dart';
 import 'package:chat_app_flutter/view_model/group_view_model.dart';
 import 'package:chat_app_flutter/view_model/message_view_model.dart';
+import 'package:chat_app_flutter/view_model/socket_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserViewModel()),
         ChangeNotifierProvider(create: (context) => MessageViewModel()),
-        ChangeNotifierProvider(create: (context) => GroupViewModel())
+        ChangeNotifierProvider(create: (context) => GroupViewModel()),
+        ChangeNotifierProvider(create: (context) => SocketChat())
       ],
       child: const MaterialApp(
         title: "Chat App",
