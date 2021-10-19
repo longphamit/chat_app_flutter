@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 class GroupRepository {
   Future<List<Group>> getAll() async {
     try {
-      var uri = Uri.http("$host:$port", getAllGroup);
+      var uri = Uri.https("$host", getAllGroup);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {

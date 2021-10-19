@@ -25,8 +25,8 @@ class SocketService {
     return socket;
   }
 
-  IO.Socket connectGroup(String host, int port, String group, var context) {
-    socket = IO.io("http://${host}:${port}", <String, dynamic>{
+  IO.Socket connectGroup(String host, String group, var context) {
+    socket = IO.io("${host}", <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
       'query': {"chatID": group}
@@ -38,7 +38,7 @@ class SocketService {
     });
     socket.on(
         'GROUP_MESSAGE',
-        (data) => Provider.of<MessageViewModel>(context)
+        (data) => Provider.of<MessageViewModel>(context, listen: false)
             .addMessageToMessageOfGroup(Message.jsonFrom(data)));
     socket.onDisconnect((_) => print('disconnect'));
     socket.on('fromServer', (_) => print(_));

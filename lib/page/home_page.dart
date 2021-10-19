@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: [
                             Container(
-                              height: 200,
+                              height: 100,
                               width: 200,
                               margin: EdgeInsets.all(20),
                               color: Colors.pink.shade100,

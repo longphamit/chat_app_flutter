@@ -13,7 +13,8 @@ class UserRepository {
         'username': username,
         'password': password
       };
-      var uri = Uri.http("$host:$port", getUserInfoApi, queryParams);
+      var uri = Uri.https("$host", getUserInfoApi, queryParams);
+      print(uri);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {
@@ -28,7 +29,7 @@ class UserRepository {
 
   Future<List<User>> getAllUser() async {
     try {
-      var uri = Uri.http("$host:$port", getAllUserApi);
+      var uri = Uri.https("$host", getAllUserApi);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {

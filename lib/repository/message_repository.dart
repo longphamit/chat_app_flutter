@@ -15,7 +15,7 @@ class MessageRepository {
         'senderId': senderId,
         'receiverId': receiverId
       };
-      var uri = Uri.http("$host:$port", getMessageIndividual, queryParams);
+      var uri = Uri.https("$host", getMessageIndividual, queryParams);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {
@@ -46,7 +46,7 @@ class MessageRepository {
   Future<List<Message>> getGroupMessage(String groupId) async {
     try {
       Map<String, String> queryParams = {'receiverId': groupId};
-      var uri = Uri.http("$host:$port", getMessageByReceiverId, queryParams);
+      var uri = Uri.https("$host", getMessageByReceiverId, queryParams);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {
@@ -76,7 +76,7 @@ class MessageRepository {
         'content': content
       };
       var bodyJson = jsonEncode(data);
-      var uri = Uri.http("$host:$port", createPeerMessage);
+      var uri = Uri.https("$host", createPeerMessage);
       var response = await http.post(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'},
           body: bodyJson);
