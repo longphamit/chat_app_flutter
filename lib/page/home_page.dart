@@ -18,8 +18,6 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     Provider.of<GroupViewModel>(context, listen: false).getAll();
     Provider.of<UserViewModel>(context, listen: false).getAll();
-    var socket = Provider.of<SocketChat>(context, listen: false).socket;
-    if (socket != null) socket.destroy();
     super.initState();
   }
 

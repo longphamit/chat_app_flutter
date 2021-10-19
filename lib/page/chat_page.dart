@@ -21,10 +21,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     receiverIndex = widget.receiverIndex;
-    Provider.of<SocketChat>(context, listen: false)
-        .connectToServer(host, port)
-        .then((value) => print(
-            Provider.of<SocketChat>(context, listen: false).socket!.connected));
     super.initState();
     // TODO: implement initState
     //

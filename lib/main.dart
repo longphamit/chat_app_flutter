@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserViewModel()),
         ChangeNotifierProvider(create: (context) => MessageViewModel()),
         ChangeNotifierProvider(create: (context) => GroupViewModel()),
-        ChangeNotifierProvider(create: (context) => SocketChat())
       ],
       child: const MaterialApp(
         title: "Chat App",
