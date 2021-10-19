@@ -1,5 +1,3 @@
-import 'package:chat_app_flutter/model/peer_model.dart';
-import 'package:chat_app_flutter/model/user_model.dart';
 import 'package:chat_app_flutter/page/chat_group_page.dart';
 import 'package:chat_app_flutter/page/chat_page.dart';
 import 'package:chat_app_flutter/utils/spinner.dart';
@@ -63,12 +61,16 @@ class _HomePageState extends State<HomePage> {
                           itemCount: user.listUser.length,
                           itemBuilder: (context, i) {
                             String currentId = user.listUser[i].id;
+                            String nameReceiver = "";
                             String peerId = peers.listPeer.firstWhere((peer) {
                               bool joinChannel = false;
+                              int index = 0;
                               peer.users?.forEach((id) {
                                 if (id == currentId) {
+                                  nameReceiver = peer.names![index];
                                   joinChannel = true;
                                 }
+                                index++;
                               });
                               return joinChannel;
                             }).id;
@@ -79,8 +81,10 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) =>
-                                            ChatPage(peerId: peerId),
+                                        builder: (_) => ChatPage(
+                                          peerId: peerId,
+                                          nameReceiver: nameReceiver,
+                                        ),
                                       ));
                                 },
                                 child: Container(

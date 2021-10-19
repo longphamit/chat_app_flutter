@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:chat_app_flutter/model/message_model.dart';
 import 'package:chat_app_flutter/service/socket_service.dart';
-import 'package:chat_app_flutter/utils/spinner.dart';
 import 'package:chat_app_flutter/view_model/message_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,12 @@ import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   final String peerId;
-  const ChatPage({Key? key, required String this.peerId}) : super(key: key);
+  final String nameReceiver;
+  const ChatPage(
+      {Key? key,
+      required String this.peerId,
+      required String this.nameReceiver})
+      : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -20,9 +24,11 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController textEditingController = TextEditingController();
   final SocketService _socketService = SocketService();
   late String peerId;
+  late String nameReceiver;
   @override
   void initState() {
     peerId = widget.peerId;
+    nameReceiver = widget.nameReceiver;
     print(peerId);
     _initData();
     _connectSocket();
@@ -94,7 +100,10 @@ class _ChatPageState extends State<ChatPage> {
     final messages = Provider.of<MessageViewModel>(context);
     final id = user.user.id;
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        title: Text(nameReceiver),
+      ),
+      resizeToAvoidBottomInset: false,
       body: Container(
           alignment: Alignment.center,
           child: Column(
