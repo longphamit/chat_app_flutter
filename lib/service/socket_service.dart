@@ -9,7 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketService {
   late IO.Socket socket;
   IO.Socket connect(String host, int port) {
-    socket = IO.io("${host}", <String, dynamic>{
+    socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
     });
@@ -24,8 +24,8 @@ class SocketService {
     return socket;
   }
 
-  IO.Socket connectGroup(String host, String group, var context) {
-    socket = IO.io("${host}", <String, dynamic>{
+  IO.Socket connectGroup(String group, var context) {
+    socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
       'query': {"chatID": group}
@@ -45,7 +45,7 @@ class SocketService {
   }
 
   void connectPeer(String peerId, var context) {
-    socket = IO.io("${host}", <String, dynamic>{
+    socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
       'query': {"chatID": peerId}

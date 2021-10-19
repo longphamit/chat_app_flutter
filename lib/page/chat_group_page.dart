@@ -40,8 +40,7 @@ class _ChatGroupState extends State<ChatGroupPage> {
   }
 
   void connectSocket() {
-    socket = socketService.connectGroup(
-        "https://server-chat-demo.herokuapp.com/", widget.groupId, context);
+    socket = socketService.connectGroup(widget.groupId, context);
   }
 
   Widget buildChatArea(User user) {
