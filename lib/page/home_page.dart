@@ -2,7 +2,6 @@ import 'package:chat_app_flutter/model/user_model.dart';
 import 'package:chat_app_flutter/page/chat_group_page.dart';
 import 'package:chat_app_flutter/page/chat_page.dart';
 import 'package:chat_app_flutter/view_model/group_view_model.dart';
-import 'package:chat_app_flutter/view_model/socket_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -59,7 +58,9 @@ class _HomePageState extends State<HomePage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => ChatPage(
-                                          receiverIndex: i,
+                                          groupId: groups[i].users!.firstWhere(
+                                              (id) =>
+                                                  id == user.listUser[i].id),
                                         )));
                           },
                           child: Container(

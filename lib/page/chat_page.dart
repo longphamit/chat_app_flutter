@@ -2,14 +2,13 @@ import 'package:chat_app_flutter/apis/common.dart';
 import 'package:chat_app_flutter/model/message_model.dart';
 import 'package:chat_app_flutter/model/user_model.dart';
 import 'package:chat_app_flutter/view_model/message_view_model.dart';
-import 'package:chat_app_flutter/view_model/socket_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
-  final int receiverIndex;
-  const ChatPage({Key? key, required int this.receiverIndex}) : super(key: key);
+  final String groupId;
+  const ChatPage({Key? key, required String this.groupId}) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -17,10 +16,10 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController textEditingController = TextEditingController();
-  late int receiverIndex;
+  late String groupId;
   @override
   void initState() {
-    receiverIndex = widget.receiverIndex;
+    groupId = widget.groupId;
     super.initState();
     // TODO: implement initState
     //
@@ -31,7 +30,7 @@ class _ChatPageState extends State<ChatPage> {
         height: MediaQuery.of(context).size.height * 0.75, child: Container());
   }
 
-  Widget buildChatArea(String senderId, String receiverId, String senderName) {
+  Widget buildChatArea(String senderId, String senderName) {
     return Container(
       child: Row(
         children: <Widget>[
@@ -47,8 +46,7 @@ class _ChatPageState extends State<ChatPage> {
               var content = textEditingController.text;
               if (content.isNotEmpty) {
                 Provider.of<MessageViewModel>(context, listen: false)
-                    .createPeerMessage(
-                        senderId, receiverId, senderName, content);
+                    .createPeerMessage(senderId, groupId, senderName, content);
                 textEditingController.text = '';
               }
             },
@@ -63,7 +61,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserViewModel>(context, listen: false);
-    final message = Provider.of<MessageViewModel>(context, listen: false);
+    final messages = Provider.of<MessageViewModel>(context).messagOfGroup;
     final id = user.user.id;
     //friends = Provider.of<UserViewModel>(context).friends;
     return Scaffold(
@@ -75,36 +73,25 @@ class _ChatPageState extends State<ChatPage> {
                 child: Container(
                   padding: EdgeInsets.only(top: 50),
                   child: FutureBuilder(
-                    future: Provider.of<MessageViewModel>(context,
-                            listen: false)
-                        .getPeerMessage(id, user.listUser[receiverIndex].id),
+                    future:
+                        Provider.of<MessageViewModel>(context, listen: false)
+                            .getGroupMessage(groupId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasError) {
                           return Text("Have error");
                         }
-                        List<Message> list = message.sortByTime();
-
                         return ListView.builder(
                             padding:
                                 EdgeInsets.only(left: 50, right: 50, top: 10),
-                            itemCount: list.length,
+                            itemCount: messages.length,
                             itemBuilder: (context, i) {
-                              if (list[i].senderId != id) {
-                                return record(
-                                    isSender: false,
-                                    name: user.listUser
-                                        .firstWhere((element) =>
-                                            element.id == list[i].senderId)
-                                        .name,
-                                    content: list[i].content,
-                                    time: list[i].time);
-                              }
                               return record(
-                                  isSender: true,
+                                  isSender:
+                                      messages[i].senderId != id ? false : true,
                                   name: user.user.name,
-                                  content: list[i].content,
-                                  time: list[i].time);
+                                  content: messages[i].content,
+                                  time: messages[i].time);
                             });
                       } else {
                         return CircularProgressIndicator();
@@ -116,10 +103,7 @@ class _ChatPageState extends State<ChatPage> {
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    buildChatArea(
-                        id, user.listUser[receiverIndex].id, user.user.name)
-                  ],
+                  children: [buildChatArea(id, user.user.name)],
                 ),
               ),
               Text("${user.user.name}"),

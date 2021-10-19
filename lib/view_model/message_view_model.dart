@@ -31,14 +31,6 @@ class MessageViewModel extends ChangeNotifier {
     }
   }
 
-  List<Message> sortByTime() {
-    List<Message> peer = [];
-    peer.addAll(sender);
-    peer.addAll(receiver);
-    peer.sort((a, b) => a.time.compareTo(b.time));
-    return peer;
-  }
-
   Future<void> createPeerMessage(String senderId, String receiverId,
       String senderName, String content) async {
     try {
