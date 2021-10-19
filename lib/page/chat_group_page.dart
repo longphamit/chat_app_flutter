@@ -82,6 +82,9 @@ class _ChatGroupState extends State<ChatGroupPage> {
     final messages = Provider.of<MessageViewModel>(context).messagOfGroup;
     final user = Provider.of<UserViewModel>(context).user;
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.groupName),
+      ),
       body: Container(
         child: Column(
           children: [
