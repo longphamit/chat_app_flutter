@@ -1,5 +1,3 @@
-import 'package:chat_app_flutter/model/user_model.dart';
-
 class Group {
   late String id;
   late String name;

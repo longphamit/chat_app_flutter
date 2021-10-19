@@ -1,14 +1,16 @@
-import 'package:chat_app_flutter/apis/common.dart';
+import 'dart:convert';
+
 import 'package:chat_app_flutter/model/message_model.dart';
-import 'package:chat_app_flutter/model/user_model.dart';
+import 'package:chat_app_flutter/service/socket_service.dart';
+import 'package:chat_app_flutter/utils/spinner.dart';
 import 'package:chat_app_flutter/view_model/message_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
-  final String groupId;
-  const ChatPage({Key? key, required String this.groupId}) : super(key: key);
+  final String peerId;
+  const ChatPage({Key? key, required String this.peerId}) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -16,95 +18,106 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController textEditingController = TextEditingController();
-  late String groupId;
+  final SocketService _socketService = SocketService();
+  late String peerId;
   @override
   void initState() {
-    groupId = widget.groupId;
+    peerId = widget.peerId;
+    print(peerId);
+    _initData();
+    _connectSocket();
+    //initData();
     super.initState();
     // TODO: implement initState
     //
   }
 
-  Widget buildChatList() {
-    return Container(
-        height: MediaQuery.of(context).size.height * 0.75, child: Container());
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _socketService.disconnect();
+    super.dispose();
   }
 
-  Widget buildChatArea(String senderId, String senderName) {
+  void _connectSocket() {
+    _socketService.connectPeer(peerId, this.context);
+  }
+
+  Future<void> _initData() async {
+    await Provider.of<MessageViewModel>(this.context, listen: false)
+        .getPeerMessage(peerId);
+  }
+
+  Widget buildChatList() {
     return Container(
-      child: Row(
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: TextField(
-              controller: textEditingController,
-            ),
+        height: MediaQuery.of(this.context).size.height * 0.75,
+        child: Container());
+  }
+
+  Widget buildChatArea(
+      String senderId, String senderName, BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: TextField(
+            controller: textEditingController,
           ),
-          SizedBox(width: 10.0),
-          FloatingActionButton(
-            onPressed: () {
-              var content = textEditingController.text;
-              if (content.isNotEmpty) {
-                Provider.of<MessageViewModel>(context, listen: false)
-                    .createPeerMessage(senderId, groupId, senderName, content);
-                textEditingController.text = '';
-              }
-            },
-            elevation: 0,
-            child: Icon(Icons.send),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(width: 10.0),
+        FloatingActionButton(
+          onPressed: () {
+            var content = textEditingController.text;
+            if (content.isNotEmpty) {
+              var message = {
+                "receiverId": widget.peerId,
+                "senderName": senderName,
+                "senderId": senderId,
+                "content": textEditingController.text
+              };
+              _socketService.socket.emit('PEER_MESSAGE', jsonEncode(message));
+              Provider.of<MessageViewModel>(context, listen: false)
+                  .addPeerMessage(Message.jsonFromInternal(message));
+              textEditingController.text = '';
+            }
+          },
+          elevation: 0,
+          child: Icon(Icons.send),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserViewModel>(context, listen: false);
-    final messages = Provider.of<MessageViewModel>(context).messagOfGroup;
+    final user = Provider.of<UserViewModel>(context);
+    final messages = Provider.of<MessageViewModel>(context);
     final id = user.user.id;
-    //friends = Provider.of<UserViewModel>(context).friends;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
           alignment: Alignment.center,
           child: Column(
             children: [
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.only(top: 50),
-                  child: FutureBuilder(
-                    future:
-                        Provider.of<MessageViewModel>(context, listen: false)
-                            .getGroupMessage(groupId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.hasError) {
-                          return Text("Have error");
-                        }
-                        return ListView.builder(
-                            padding:
-                                EdgeInsets.only(left: 50, right: 50, top: 10),
-                            itemCount: messages.length,
-                            itemBuilder: (context, i) {
-                              return record(
-                                  isSender:
-                                      messages[i].senderId != id ? false : true,
-                                  name: user.user.name,
-                                  content: messages[i].content,
-                                  time: messages[i].time);
-                            });
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    },
-                  ),
-                ),
+                    padding: EdgeInsets.only(top: 50),
+                    child: ListView.builder(
+                        padding: EdgeInsets.only(left: 50, right: 50, top: 10),
+                        itemCount: messages.peerList.length,
+                        itemBuilder: (context, i) {
+                          return record(
+                              isSender: messages.peerList[i].senderId != id
+                                  ? false
+                                  : true,
+                              name: messages.peerList[i].senderName,
+                              content: messages.peerList[i].content,
+                              time: messages.peerList[i].time);
+                        })),
               ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [buildChatArea(id, user.user.name)],
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [buildChatArea(id, user.user.name, context)],
               ),
               Text("${user.user.name}"),
             ],
@@ -126,20 +139,31 @@ class _ChatPageState extends State<ChatPage> {
           Column(
             children: [
               Row(
-                children: [Text(name)],
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.black87,
+                        decorationThickness: 1.5),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 4,
               ),
               Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                      color: isSender ? Colors.blue : Colors.black12),
+                      color:
+                          isSender ? Colors.lightBlueAccent : Colors.black12),
                   child: Text(
                     content,
                     style: TextStyle(
-                        color: isSender ? Colors.white : Colors.black),
+                        color: isSender ? Colors.black : Colors.black),
                   )),
-              Row(
-                children: [Text(time.toLocal().toString())],
-              ),
             ],
           ),
         ],

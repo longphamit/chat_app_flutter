@@ -7,14 +7,10 @@ import 'package:flutter/foundation.dart';
 class MessageViewModel extends ChangeNotifier {
   final MessageService _messageService = MessageService();
   List<Message> messagOfGroup = [];
-  List<Message> sender = [];
-  List<Message> receiver = [];
-  Future<void> getPeerMessage(String senderId, String receiverId) async {
+  List<Message> peerList = [];
+  Future<void> getPeerMessage(String peerId) async {
     try {
-      List<List<Message>> peerList =
-          await _messageService.getPeerMessage(senderId, receiverId);
-      sender = peerList[0];
-      receiver = peerList[1];
+      peerList = await _messageService.getPeerMessage(peerId);
       notifyListeners();
     } on Exception catch (e) {
       debugPrint(e.toString());
@@ -31,16 +27,9 @@ class MessageViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> createPeerMessage(String senderId, String receiverId,
-      String senderName, String content) async {
-    try {
-      Message message = await _messageService.createPeerMessage(
-          senderId, receiverId, senderName, content);
-      sender.add(message);
-      notifyListeners();
-    } on Exception catch (e) {
-      debugPrint(e.toString());
-    }
+  Future<void> addPeerMessage(Message message) async {
+    peerList.add(message);
+    notifyListeners();
   }
 
   void addMessageToMessageOfGroup(Message message) {
@@ -48,3 +37,18 @@ class MessageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+
+
+
+// Future<void> createPeerMessage(String senderId, String receiverId,
+//       String senderName, String content) async {
+//     try {
+//       Message message = await _messageService.createPeerMessage(
+//           senderId, receiverId, senderName, content);
+//       peerList.add(message);
+//       notifyListeners();
+//     } on Exception catch (e) {
+//       debugPrint(e.toString());
+//     }
+//   }

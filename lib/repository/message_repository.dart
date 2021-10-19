@@ -8,34 +8,22 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class MessageRepository {
-  Future<List<List<Message>>> getPeerMessage(
-      String senderId, String receiverId) async {
+  Future<List<Message>> getGroupMessage(String groupId) async {
     try {
-      Map<String, String> queryParams = {
-        'senderId': senderId,
-        'receiverId': receiverId
-      };
-      var uri = Uri.https("$host", getMessageIndividual, queryParams);
+      Map<String, String> queryParams = {'receiverId': groupId};
+      var uri = Uri.http("$host", getMessageByReceiverId, queryParams);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(response.body);
-        var sender = decodedResponse["sender"];
+        var message = decodedResponse["message"];
         var receiver = decodedResponse["receiver"];
-        List<Message> senderList = [];
-        List<Message> receiverList = [];
-        List<List<Message>> peerList = [];
-        if (sender != null) {
-          (sender as List)
-              .forEach((element) => senderList.add(Message.jsonFrom(element)));
+        List<Message> messageList = [];
+        if (message != null) {
+          (message as List)
+              .forEach((element) => messageList.add(Message.jsonFrom(element)));
         }
-        if (receiver != null) {
-          (receiver as List).forEach(
-              (element) => receiverList.add(Message.jsonFrom(element)));
-        }
-        peerList.add(senderList);
-        peerList.add(receiverList);
-        return peerList;
+        return messageList;
       }
       throw Exception();
     } on Exception catch (e) {
@@ -43,16 +31,15 @@ class MessageRepository {
     }
   }
 
-  Future<List<Message>> getGroupMessage(String groupId) async {
+  Future<List<Message>> getPeerMessage(String peerId) async {
     try {
-      Map<String, String> queryParams = {'receiverId': groupId};
-      var uri = Uri.https("$host", getMessageByReceiverId, queryParams);
+      Map<String, String> queryParams = {'peerId': peerId};
+      var uri = Uri.http("$host", getPeerMessageByPeerId, queryParams);
       var response = await http.get(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(response.body);
         var message = decodedResponse["message"];
-        var receiver = decodedResponse["receiver"];
         List<Message> messageList = [];
         if (message != null) {
           (message as List)
@@ -76,7 +63,7 @@ class MessageRepository {
         'content': content
       };
       var bodyJson = jsonEncode(data);
-      var uri = Uri.https("$host", createPeerMessage);
+      var uri = Uri.http("$host", createPeerMessage);
       var response = await http.post(uri,
           headers: {HttpHeaders.contentTypeHeader: 'application/json'},
           body: bodyJson);
@@ -90,3 +77,47 @@ class MessageRepository {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+// Future<List<List<Message>>> getPeerMessage(
+//       String senderId, String receiverId) async {
+//     try {
+//       Map<String, String> queryParams = {
+//         'senderId': senderId,
+//         'receiverId': receiverId
+//       };
+//       var uri = Uri.http("$host:$port", getMessageIndividual, queryParams);
+//       var response = await http.get(uri,
+//           headers: {HttpHeaders.contentTypeHeader: 'application/json'});
+//       if (response.statusCode == 200) {
+//         var decodedResponse = jsonDecode(response.body);
+//         var sender = decodedResponse["sender"];
+//         var receiver = decodedResponse["receiver"];
+//         List<Message> senderList = [];
+//         List<Message> receiverList = [];
+//         List<List<Message>> peerList = [];
+//         if (sender != null) {
+//           (sender as List)
+//               .forEach((element) => senderList.add(Message.jsonFrom(element)));
+//         }
+//         if (receiver != null) {
+//           (receiver as List).forEach(
+//               (element) => receiverList.add(Message.jsonFrom(element)));
+//         }
+//         peerList.add(senderList);
+//         peerList.add(receiverList);
+//         return peerList;
+//       }
+//       throw Exception();
+//     } on Exception catch (e) {
+//       throw Exception(e.toString());
+//     }
+//   }

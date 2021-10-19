@@ -5,10 +5,9 @@ import 'package:chat_app_flutter/repository/user_repository.dart';
 
 class MessageService {
   final MessageRepository _messageRepository = MessageRepository();
-  Future<List<List<Message>>> getPeerMessage(
-      String senderId, String receiverId) async {
+  Future<List<Message>> getPeerMessage(String peerId) async {
     try {
-      return await _messageRepository.getPeerMessage(senderId, receiverId);
+      return await _messageRepository.getPeerMessage(peerId);
     } on Exception catch (e) {
       throw Exception(e.toString());
     }

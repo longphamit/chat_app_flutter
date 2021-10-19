@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 
 class GroupViewModel extends ChangeNotifier {
   final GroupService _groupService = GroupService();
-  Group user = Group();
   List<Group> listGroup = [];
 
   Future<void> getAll() async {
