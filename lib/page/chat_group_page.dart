@@ -131,11 +131,9 @@ class _ChatGroupState extends State<ChatGroupPage> {
                     }),
               ),
             ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [buildChatArea(user)],
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [buildChatArea(user)],
             ),
           ],
         ),
