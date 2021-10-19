@@ -2,6 +2,7 @@ import 'package:chat_app_flutter/model/user_model.dart';
 import 'package:chat_app_flutter/page/chat_group_page.dart';
 import 'package:chat_app_flutter/page/chat_page.dart';
 import 'package:chat_app_flutter/view_model/group_view_model.dart';
+import 'package:chat_app_flutter/view_model/socket_view_model.dart';
 import 'package:chat_app_flutter/view_model/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,8 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     Provider.of<GroupViewModel>(context, listen: false).getAll();
     Provider.of<UserViewModel>(context, listen: false).getAll();
+    var socket = Provider.of<SocketChat>(context, listen: false).socket;
+    if (socket != null) socket.destroy();
     super.initState();
   }
 
