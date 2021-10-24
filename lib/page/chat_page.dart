@@ -25,11 +25,11 @@ class _ChatPageState extends State<ChatPage> {
   final SocketService _socketService = SocketService();
   late String peerId;
   late String nameReceiver;
+  bool isLoad = false;
   @override
   void initState() {
     peerId = widget.peerId;
     nameReceiver = widget.nameReceiver;
-    print(peerId);
     _initData();
     _connectSocket();
     //initData();
@@ -50,8 +50,14 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _initData() async {
+    setState(() {
+      isLoad = true;
+    });
     await Provider.of<MessageViewModel>(this.context, listen: false)
         .getPeerMessage(peerId);
+    setState(() {
+      isLoad = false;
+    });
   }
 
   Widget buildChatList() {
@@ -104,33 +110,36 @@ class _ChatPageState extends State<ChatPage> {
         title: Text(nameReceiver),
       ),
       resizeToAvoidBottomInset: false,
-      body: Container(
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                    padding: EdgeInsets.only(top: 50),
-                    child: ListView.builder(
-                        padding: EdgeInsets.only(left: 50, right: 50, top: 10),
-                        itemCount: messages.peerList.length,
-                        itemBuilder: (context, i) {
-                          return record(
-                              isSender: messages.peerList[i].senderId != id
-                                  ? false
-                                  : true,
-                              name: messages.peerList[i].senderName,
-                              content: messages.peerList[i].content,
-                              time: messages.peerList[i].time);
-                        })),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [buildChatArea(id, user.user.name, context)],
-              ),
-              Text("${user.user.name}"),
-            ],
-          )),
+      body: isLoad
+          ? Center(child: CircularProgressIndicator())
+          : Container(
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                        padding: EdgeInsets.only(top: 50),
+                        child: ListView.builder(
+                            padding:
+                                EdgeInsets.only(left: 50, right: 50, top: 10),
+                            itemCount: messages.peerList.length,
+                            itemBuilder: (context, i) {
+                              return record(
+                                  isSender: messages.peerList[i].senderId != id
+                                      ? false
+                                      : true,
+                                  name: messages.peerList[i].senderName,
+                                  content: messages.peerList[i].content,
+                                  time: messages.peerList[i].time);
+                            })),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [buildChatArea(id, user.user.name, context)],
+                  ),
+                  Text("${user.user.name}"),
+                ],
+              )),
     );
   }
 

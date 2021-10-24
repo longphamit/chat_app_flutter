@@ -51,6 +51,7 @@ class SocketService {
       'query': {"chatID": peerId}
     });
     socket.connect();
+    socket.clearListeners();
     socket.onConnect((_) {
       print('connect with channel: $peerId');
     });
