@@ -8,29 +8,14 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
   late IO.Socket socket;
-  IO.Socket connect(String host, int port) {
-    socket = IO.io("https://${host}", <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': true,
-    });
-    socket.connect();
-    socket.onConnect((_) {
-      print('connect');
-      socket.emit('msg', 'test');
-    });
-    socket.on('event', (data) => print(data));
-    socket.onDisconnect((_) => print('disconnect'));
-    socket.on('fromServer', (_) => print(_));
-    return socket;
-  }
-
   IO.Socket connectGroup(String group, var context) {
     socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
-      'autoConnect': true,
+      'autoConnect': false,
       'query': {"chatID": group}
     });
     socket.connect();
+    socket.clearListeners();
     socket.onConnect((_) {
       print('connect');
       socket.emit('msg', 'test');
@@ -47,7 +32,7 @@ class SocketService {
   void connectPeer(String peerId, var context) {
     socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
-      'autoConnect': true,
+      'autoConnect': false,
       'query': {"chatID": peerId}
     });
     socket.connect();
