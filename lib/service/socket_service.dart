@@ -11,7 +11,7 @@ class SocketService {
   IO.Socket connectGroup(String group, var context) {
     socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
-      'autoConnect': false,
+      'autoConnect': true,
       'query': {"chatID": group}
     });
     socket.connect();
@@ -32,7 +32,7 @@ class SocketService {
   void connectPeer(String peerId, var context) {
     socket = IO.io("https://${host}", <String, dynamic>{
       'transports': ['websocket'],
-      'autoConnect': false,
+      'autoConnect': true,
       'query': {"chatID": peerId}
     });
     socket.connect();
